@@ -1,0 +1,21 @@
+---
+
+- name: Delete vTM Config
+  hosts: vtms
+  tasks:
+    - name: Delete vserver
+      virtual_server:
+          name: test_vs
+          password: "{{ admin_password }}"
+          state: absent
+    - name: Delete pool
+      pool:
+          name: test_pool
+          password: "{{ admin_password }}"
+          state: absent
+    - name: Delete rule
+      rule:
+          name: my_rule
+          password: "{{ admin_password }}"
+          state: absent
+  

@@ -1,0 +1,5 @@
+[vtms]
+vtm1.my.net ansible_user=admin 
+
+[vtms:vars]
+admin_password=P@55w0rd!

@@ -1,0 +1,42 @@
+---
+
+- name: Create new vTM Config
+  hosts: vtms
+  tasks:
+    - name: Create vserver
+      virtual_server:
+          name: test_vs
+          password: "{{ admin_password }}"
+          properties:
+              basic:
+                  enabled: True
+                  port: 1234
+                  pool: test_pool
+                  request_rules: 
+                    - my_rule
+  
+    - name: Create pool
+      pool:
+          name: test_pool
+          password: "{{ admin_password }}"
+          properties:
+              basic:
+                  nodes_table:
+                      - node: 10.0.0.10:80
+                        weight: 1
+                      - node: 10.0.0.11:80
+                        weight: 3
+              load_balancing:
+                  algorithm: weighted_round_robin
+          
+    - name: Create rule
+      rule:
+          name: my_rule
+          password: "{{ admin_password }}"
+          content: |
+              $rabbitTracks = http.getHeader("X-Rabbit-Tracks");
+
+              if($rabbitTracks == "fresh")
+              {
+                  http.sendResponse("200 OK", "text/plain", "Kill the rabbit!", "");
+              }
