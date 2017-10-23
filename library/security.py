@@ -11,7 +11,7 @@ class NotFoundError(Exception):
 
 def get(password):
     response = requests.get(
-        "http://localhost:9070/api/tm/4.0/config/active/security",
+        "http://localhost:9070/api/tm/5.0/config/active/security",
         auth=("admin", password)
     )
     if response.status_code == 200:
@@ -27,7 +27,7 @@ def get(password):
 
 def delete(password):
     response = requests.delete(
-        "http://localhost:9070/api/tm/4.0/config/active/security",
+        "http://localhost:9070/api/tm/5.0/config/active/security",
         auth=("admin", password)
     )
     if response.status_code != 204:
@@ -36,7 +36,7 @@ def delete(password):
 
 def put(password, data):
     response = requests.put(
-        "http://localhost:9070/api/tm/4.0/config/active/security",
+        "http://localhost:9070/api/tm/5.0/config/active/security",
         auth=("admin", password),
         headers={"Content-Type": "application/json"},
         data=data
