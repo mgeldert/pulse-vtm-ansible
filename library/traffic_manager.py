@@ -11,7 +11,7 @@ class NotFoundError(Exception):
 
 def get(password, name):
     response = requests.get(
-        "http://localhost:9070/api/tm/3.8/config/active/traffic_managers/{}".format(name),
+        "http://localhost:9070/api/tm/5.1/config/active/traffic_managers/{}".format(name),
         auth=("admin", password)
     )
     if response.status_code == 200:
@@ -27,7 +27,7 @@ def get(password, name):
 
 def delete(password, name):
     response = requests.delete(
-        "http://localhost:9070/api/tm/3.8/config/active/traffic_managers/{}".format(name),
+        "http://localhost:9070/api/tm/5.1/config/active/traffic_managers/{}".format(name),
         auth=("admin", password)
     )
     if response.status_code != 204:
@@ -36,7 +36,7 @@ def delete(password, name):
 
 def put(password, name, data):
     response = requests.put(
-        "http://localhost:9070/api/tm/3.8/config/active/traffic_managers/{}".format(name),
+        "http://localhost:9070/api/tm/5.1/config/active/traffic_managers/{}".format(name),
         auth=("admin", password),
         headers={"Content-Type": "application/json"},
         data=data
@@ -46,7 +46,7 @@ def put(password, name, data):
 
 
 def sort_table(section, field, table):
-    table_keys = {"appliance": {"ip": ["name", "addr", "mask"], "if": ["name"], "routes": ["name", "gw", "if", "mask"], "hosts": ["name", "ip_address"]}, "basic": {"trafficip": ["name", "networks"], "appliance_sysctl": ["sysctl", "value"], "appliance_card": ["name", "interfaces"]}}
+    table_keys = {"basic": {"trafficip": ["name", "networks"], "appliance_sysctl": ["sysctl", "value"], "appliance_card": ["name", "interfaces"]}, "appliance": {"ip": ["name", "addr", "mask"], "if": ["name"], "hosts": ["name", "ip_address"], "routes": ["name", "gw", "if", "mask"]}}
     sort_by = table_keys[section][field]
     sort_tuple = ", ".join("x['{}']".format(field) for field in sort_by)
     return sorted(table, key=lambda x: (eval(sort_tuple)))

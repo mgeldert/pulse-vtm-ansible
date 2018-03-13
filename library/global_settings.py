@@ -11,7 +11,7 @@ class NotFoundError(Exception):
 
 def get(password):
     response = requests.get(
-        "http://localhost:9070/api/tm/3.8/config/active/global_settings",
+        "http://localhost:9070/api/tm/5.1/config/active/global_settings",
         auth=("admin", password)
     )
     if response.status_code == 200:
@@ -27,7 +27,7 @@ def get(password):
 
 def delete(password):
     response = requests.delete(
-        "http://localhost:9070/api/tm/3.8/config/active/global_settings",
+        "http://localhost:9070/api/tm/5.1/config/active/global_settings",
         auth=("admin", password)
     )
     if response.status_code != 204:
@@ -36,7 +36,7 @@ def delete(password):
 
 def put(password, data):
     response = requests.put(
-        "http://localhost:9070/api/tm/3.8/config/active/global_settings",
+        "http://localhost:9070/api/tm/5.1/config/active/global_settings",
         auth=("admin", password),
         headers={"Content-Type": "application/json"},
         data=data
@@ -46,7 +46,7 @@ def put(password, data):
 
 
 def sort_table(section, field, table):
-    table_keys = {"ip": {"appliance_returnpath": ["mac"]}, "rest_api": {"proxy_map": ["absolute_path", "symlink_path"]}}
+    table_keys = {"rest_api": {"proxy_map": ["absolute_path", "symlink_path"]}, "ip": {"appliance_returnpath": ["mac"]}}
     sort_by = table_keys[section][field]
     sort_tuple = ", ".join("x['{}']".format(field) for field in sort_by)
     return sorted(table, key=lambda x: (eval(sort_tuple)))
