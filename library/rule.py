@@ -6,10 +6,19 @@ import json
 import requests
 from traceback import format_exc
 
+
 class NotFoundError(Exception):
     pass
 
+
+class InvalidFieldTypeError(Exception):
+    pass
+
+
 def get(password, name):
+    """
+    Perform an HTTP GET request to the vTM REST API.
+    """
     response = requests.get(
         "http://localhost:9070/api/tm/5.1/config/active/rules/{}".format(name),
         auth=("admin", password)
@@ -26,6 +35,9 @@ def get(password, name):
 
 
 def delete(password, name):
+    """
+    Perform an HTTP DELETE request to the vTM REST API.
+    """
     response = requests.delete(
         "http://localhost:9070/api/tm/5.1/config/active/rules/{}".format(name),
         auth=("admin", password)
@@ -35,6 +47,9 @@ def delete(password, name):
 
 
 def put(password, name, data):
+    """
+    Perform an HTTP PUT request to the vTM REST API.
+    """
     response = requests.put(
         "http://localhost:9070/api/tm/5.1/config/active/rules/{}".format(name),
         auth=("admin", password),
@@ -46,6 +61,12 @@ def put(password, name, data):
 
 
 def check_changes(module):
+    """
+    Check if applying new config will change existing config.
+
+    Returns:
+        bool    True if a change is required, else False.
+    """
     try:
         # Get full object configuration from vTM
         data = get(module.params['password'], module.params['name'])
