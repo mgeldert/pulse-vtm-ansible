@@ -9,10 +9,10 @@ from traceback import format_exc
 class NotFoundError(Exception):
     pass
 
-def get(password):
+def get(username, password):
     response = requests.get(
         "http://localhost:9070/api/tm/6.0/config/active/application_firewall",
-        auth=("admin", password)
+        auth=(username, password)
     )
     if response.status_code == 200:
         try:
@@ -25,19 +25,19 @@ def get(password):
         response.raise_for_status()
 
 
-def delete(password):
+def delete(username, password):
     response = requests.delete(
         "http://localhost:9070/api/tm/6.0/config/active/application_firewall",
-        auth=("admin", password)
+        auth=(username, password)
     )
     if response.status_code != 204:
         response.raise_for_status
 
 
-def put(password, data):
+def put(username, password, data):
     response = requests.put(
         "http://localhost:9070/api/tm/6.0/config/active/application_firewall",
-        auth=("admin", password),
+        auth=(username, password),
         headers={"Content-Type": "application/octet-stream"},
         data=data
     )
@@ -48,7 +48,7 @@ def put(password, data):
 def check_changes(module):
     try:
         # Get full object configuration from vTM
-        data = get(module.params['password'])
+        data = get(module.params['username'], module.params['password'])
         if module.params['state'] == "absent":
             return True
     except NotFoundError:
@@ -62,15 +62,16 @@ def check_changes(module):
 
 def execute(module):
     if module.params['state'] == "absent":
-        delete(module.params['password'])
+        delete(module.params['username'], module.params['password'])
     else:
         data = module.params['content']
-        put(module.params['password'], data)
+        put(module.params['username'], module.params['password'], data)
 
 
 def main():
     object_type = "application_firewall"
     argument_spec = { 
+        "username": {"default": "admin"},
         "password": {},
         "content": {"type": "str"}
     }
