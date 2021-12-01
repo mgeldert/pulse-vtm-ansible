@@ -9,10 +9,10 @@ from traceback import format_exc
 class NotFoundError(Exception):
     pass
 
-def get(password, name):
+def get(username, password, name):
     response = requests.get(
-        "http://localhost:9070/api/tm/5.1/config/active/user_groups/{}".format(name),
-        auth=("admin", password)
+        "http://localhost:9070/api/tm/6.0/config/active/user_groups/{}".format(name),
+        auth=(username, password)
     )
     if response.status_code == 200:
         try:
@@ -25,19 +25,19 @@ def get(password, name):
         response.raise_for_status()
 
 
-def delete(password, name):
+def delete(username, password, name):
     response = requests.delete(
-        "http://localhost:9070/api/tm/5.1/config/active/user_groups/{}".format(name),
-        auth=("admin", password)
+        "http://localhost:9070/api/tm/6.0/config/active/user_groups/{}".format(name),
+        auth=(username, password)
     )
     if response.status_code != 204:
         response.raise_for_status
 
 
-def put(password, name, data):
+def put(username, password, name, data):
     response = requests.put(
-        "http://localhost:9070/api/tm/5.1/config/active/user_groups/{}".format(name),
-        auth=("admin", password),
+        "http://localhost:9070/api/tm/6.0/config/active/user_groups/{}".format(name),
+        auth=(username, password),
         headers={"Content-Type": "application/json"},
         data=data
     )
@@ -55,7 +55,7 @@ def sort_table(section, field, table):
 def check_changes(module):
     try:
         # Get full object configuration from vTM
-        data = get(module.params['password'], module.params['name'])
+        data = get(module.params['username'], module.params['password'], module.params['name'])
         if module.params['state'] == "absent":
             return True
     except NotFoundError:
@@ -88,10 +88,10 @@ def check_changes(module):
 
 def execute(module):
     if module.params['state'] == "absent":
-        delete(module.params['password'], module.params['name'])
+        delete(module.params['username'], module.params['password'], module.params['name'])
     else:
         data = json.dumps({'properties': module.params['properties']})
-        put(module.params['password'], module.params['name'], data)
+        put(module.params['username'], module.params['password'], module.params['name'], data)
 
 
 def main():
@@ -99,6 +99,7 @@ def main():
     argument_spec = { 
         "name": {"required": True},
         "state": {"default": "present", "choices": ["present", "absent"]},
+        "username": {"default": "admin"},
         "password": {},
         "properties": {"type": "dict"}
     }
